@@ -8,7 +8,7 @@ function LinkedList() {
 
       <div className="mainbox">
         <TheoryPageHeader
-          title="Singly Linked List"
+          title="Singly Linked List" 
           to="/linked-list/visualizer"
         />
 
