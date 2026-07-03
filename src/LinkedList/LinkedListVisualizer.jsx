@@ -9,7 +9,7 @@ function cloneList(arr) {
 
 function LinkedListVisualizer() {
   const [list, setList] = useState([]);
-
+  
   const [steps, setSteps] = useState([]);
   const [stepIndex, setStepIndex] = useState(0);
 
