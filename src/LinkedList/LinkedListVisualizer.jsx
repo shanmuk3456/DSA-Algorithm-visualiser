@@ -1,7 +1,7 @@
 import VisualizerPageHeader from "../components/VisualizerPageHeader";
 import { useState } from "react";
 import "../Array/array.css";
-import "./linkedlist.css";
+import "./LinkedList.css";
 
 function cloneList(arr) {
   return arr.map((node) => ({ ...node }));
