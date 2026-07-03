@@ -49,9 +49,14 @@ function Home() {
             </li>
             <li>
               <Link to="/linked-list" className="dropdown-item">
-                Linked-list
+                Singly Linked-list
               </Link>
             </li>
+            {/* <li>
+              <Link to="/doubly-linked-list" className="dropdown-item">
+                Doubly Linked-list
+              </Link>
+            </li> */}
             <li>
               <Link to="/btree" className="dropdown-item">
                 Binary Tree
@@ -130,17 +135,27 @@ function Home() {
 
         <div className="dsa-card">
           <Link to="/linked-list" className="card-name">
-            <h3>Linked-list</h3>
-            <p>Visualize Linked-list operations</p>
+            <h3>Singly Linked-list</h3>
+            <p>Visualize SLL operations</p>
             <div className="card-image">
               <img src="/assets/Linked-list.png" alt="Linked-list" />
             </div>
           </Link>
         </div>
 
+        {/* <div className="dsa-card">
+          <Link to="/dlinkedlist" className="card-name">
+            <h3>Doubly Linked List</h3>
+            <p>Visualize DLL operations</p>
+            <div className="card-image">
+              <img src="/assets/doublylinkedlist.png" alt="Doubly Linked List Image" />
+            </div>
+          </Link>
+        </div> */}
+
         <div className="dsa-card">
           <Link to="/btree" className="card-name">
-            <h3>Binary Tree</h3>
+            <h3>Binary Tree</h3> 
             <p>Visualize Binary Tree operations</p>
             <div className="card-image">
               <img src="/assets/bt.png" alt="Binary Tree" />
