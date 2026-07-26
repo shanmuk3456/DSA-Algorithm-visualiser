@@ -2,9 +2,9 @@ name: CI/CD — DSA Visualiser
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, dev]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, dev]
 
 jobs:
   # ─────────────────────────────────────────────────────────────────
@@ -12,7 +12,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────
   lint-and-build:
     name: Lint & Build
-    runs-on: self-hosted       # ← your self-hosted runner
+    runs-on: ${{ (github.ref == 'refs/heads/dev' || github.base_ref == 'dev') && 'dev-ai' || 'gamma' }}
 
     steps:
       - name: Checkout code
@@ -42,13 +42,62 @@ jobs:
           retention-days: 1
 
   # ─────────────────────────────────────────────────────────────────
-  # Job 2: Docker build & deploy (only on push to main/master)
+  # Job 2: Deploy Dev
   # ─────────────────────────────────────────────────────────────────
-  deploy:
-    name: Docker Build & Deploy
-    runs-on: self-hosted
+  deploy-dev:
+    name: Docker Build & Deploy (Dev)
+    runs-on: dev-ai
+    needs: lint-and-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    environment:
+      name: dsa-development
+      url: https://dev-dsa.vjstartup.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --target runner \
+            -t dsa-visualiser:latest \
+            -t dsa-visualiser:${{ github.sha }} \
+            .
+
+      - name: Stop & remove old container (if running)
+        run: |
+          docker rm -f dsa-visualiser 2>/dev/null || true
+
+      - name: Run new container
+        run: |
+          docker run -d \
+            --name dsa-visualiser \
+            --restart unless-stopped \
+            -p 3322:3000 \
+            dsa-visualiser:latest
+
+      - name: Health check
+        run: |
+          echo "Waiting for container to start..."
+          sleep 5
+          curl -f http://localhost:3322 || (echo "Health check failed!" && exit 1)
+
+      - name: Clean up old images
+        run: |
+          docker image prune -f
+
+  # ─────────────────────────────────────────────────────────────────
+  # Job 3: Deploy Prod
+  # ─────────────────────────────────────────────────────────────────
+  deploy-prod:
+    name: Docker Build & Deploy (Prod)
+    runs-on: gamma
     needs: lint-and-build
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    environment:
+      name: dsa-production
+      url: https://dsa.vjstartup.com
 
     steps:
       - name: Checkout code
